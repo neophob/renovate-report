@@ -20,7 +20,7 @@ npm install -g renovate-reporter
 
 ### One-time Usage with npx
 ```bash
-npx renovate-reporter <input-file> [output-file]
+npx --yes renovate-reporter <input-file> [output-file]
 ```
 
 ## Usage
