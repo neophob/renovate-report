@@ -4,7 +4,7 @@
   "description": "A tool to parse Renovate debug NDJSON files and create detailed HTML reports",
   "main": "index.js",
   "bin": {
-    "renovate-reporter": "./bin/cli.js"
+    "renovate-reporter": "bin/cli.js"
   },
   "scripts": {
     "format:write": "npx -y prettier --write .",
