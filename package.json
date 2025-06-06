@@ -1,0 +1,40 @@
+{
+  "name": "renovate-reporter",
+  "version": "1.0.0",
+  "description": "A tool to parse Renovate debug NDJSON files and create detailed HTML reports",
+  "main": "index.js",
+  "bin": {
+    "renovate-reporter": "./bin/cli.js"
+  },
+  "scripts": {
+    "format:write": "npx -y prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "renovate",
+    "renovatebot",
+    "log-parser",
+    "report",
+    "ndjson",
+    "cli"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "app/",
+    "bin/",
+    "index.js",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neophob/renovate-reporter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/neophob/renovate-reporter/issues"
+  },
+  "homepage": "https://github.com/neophob/renovate-reporter#readme"
+}
