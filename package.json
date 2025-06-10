@@ -1,6 +1,6 @@
 {
   "name": "renovate-reporter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A tool to parse Renovate debug NDJSON files and create detailed HTML reports",
   "main": "index.js",
   "bin": {
