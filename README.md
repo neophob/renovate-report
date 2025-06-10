@@ -38,5 +38,27 @@ env:
 
 ## Requirements
 
-- Node.js 20.0.0 or higher
+- Node.js 22.0.0 or higher
 - Renovate debug NDJSON log files
+
+## Development
+
+### Testing
+
+This project uses the Node.js built-in test runner for unit tests:
+
+```bash
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+```
+
+### GitHub Actions
+
+Continuous integration is set up with GitHub Actions, which automatically runs tests on:
+- All pushes to main/master branches
+- All pull requests to main/master branches
+
+The workflow runs tests against multiple Node.js versions (22.x) to ensure compatibility.

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "format:write": "npx -y prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/unit/*.test.js",
+    "test:watch": "node --test --watch test/unit/"
   },
   "keywords": [
     "renovate",
@@ -21,7 +22,7 @@
   "author": "",
   "license": "MIT",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "files": [
     "app/",
