@@ -154,8 +154,6 @@ function getNrOfCreatedMr() {
     );
   });
 
-  console.log("getNrOfCreatedMr", { messages })
-
   affectedRepos = uniqueReposMap(messages);
   let table = "<table><tr>"+
     "<th>Repo</th>"+
@@ -172,6 +170,42 @@ function getNrOfCreatedMr() {
     ${table}
   </ul>
   </div>`;
+}
+
+function getConfig() {
+  const configEntries = allEvents.filter((entry) => {
+    return (
+      entry.msg &&
+      entry.msg === "Combined config" &&
+      entry.config
+    );
+  });
+
+  if (configEntries.length > 0) {
+    const configObj = configEntries[0].config;
+
+    let table = "<table>";
+    table += `<tr>
+      <th>Key</th>
+      <th>Value</th>
+    </tr>`;
+
+    ['platform','timezone', 'prFooter', 'lockFileMaintenance','automerge'].forEach((configKey) => {
+      const data = configObj[configKey];
+      table += `<tr>
+        <td>${configKey}</td>
+        <td>${JSON.stringify(data, null, 2)}</td>
+      </tr>`;
+    });
+
+    table += "</table>";
+
+    return `<div>
+      <h1><b>Config</b></h1>
+      ${table}
+    </div><br>`;
+  }
+
 }
 
 // Collect and summarize managers usage across all repositories
@@ -196,7 +230,6 @@ function getManagersUsageStats() {
       // Count each manager occurrence
       Object.keys(entry.managers).forEach((manager) => {
         if (!managersUsage[manager]) {
-          console.log("add manager", manager);
           managersUsage[manager] = {
             repositoryCount: 0,
             totalFiles: 0,
@@ -372,6 +405,9 @@ function createHtmlTable(errors) {
 </style>
 </head>
 <body>
+
+
+${getConfig()}
 
 ${getAnalyzedRepositories()}
 
