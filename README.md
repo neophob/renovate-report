@@ -38,7 +38,7 @@ env:
 
 ## Requirements
 
-- Node.js 14.0.0 or higher
+- Node.js 22.0.0 or higher
 - Renovate debug NDJSON log files
 
 ## Development
@@ -61,4 +61,4 @@ Continuous integration is set up with GitHub Actions, which automatically runs t
 - All pushes to main/master branches
 - All pull requests to main/master branches
 
-The workflow runs tests against multiple Node.js versions (14.x, 16.x, 18.x, 20.x) to ensure compatibility.
+The workflow runs tests against multiple Node.js versions (22.x) to ensure compatibility.
