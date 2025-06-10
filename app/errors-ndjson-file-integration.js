@@ -16,6 +16,7 @@ const events = require("events");
  */
 
 /**
+ * Find errors from a Renovate log file in NDJSON format.
  * @arg {string} inputFile
  * @return {Promise<RenovateLogLine[]>}
  */

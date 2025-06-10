@@ -6,9 +6,7 @@ const {
   uniqueRepos,
 } = require("./errors-ndjson-file-integration");
 
-const EXCLUDED_ERROR_MSG = [
-  "isBranchConflicted: cleanup error",
-];
+const EXCLUDED_ERROR_MSG = ["isBranchConflicted: cleanup error"];
 
 let affectedRepos;
 let analyzedRepositories = [];
@@ -24,7 +22,7 @@ if (args.length !== 2) {
 }
 const inputFile = args[0];
 const outputFile = args[1];
-let allEvents;
+let allEvents = [];
 
 function compare(a, b) {
   if (a.msg === b.msg) {
@@ -193,6 +191,7 @@ function getManagersUsageStats() {
       // Count each manager occurrence
       Object.keys(entry.managers).forEach((manager) => {
         if (!managersUsage[manager]) {
+          console.log("add manager", manager);
           managersUsage[manager] = {
             repositoryCount: 0,
             totalFiles: 0,

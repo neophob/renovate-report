@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
+const fs = require("fs");
 
 // Get command line arguments
 const args = process.argv.slice(2);
 
 // Show help if no arguments or help flag
-if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
   console.log(`
 Renovate Reporter - Parse Renovate debug logs and generate HTML reports
 
@@ -29,8 +29,8 @@ Examples:
 }
 
 // Show version
-if (args.includes('--version') || args.includes('-v')) {
-  const packageJson = require('../package.json');
+if (args.includes("--version") || args.includes("-v")) {
+  const packageJson = require("../package.json");
   console.log(`renovate-reporter v${packageJson.version}`);
   process.exit(0);
 }
@@ -38,7 +38,7 @@ if (args.includes('--version') || args.includes('-v')) {
 // Validate input file
 const inputFile = args[0];
 if (!inputFile) {
-  console.error('Error: Input file is required');
+  console.error("Error: Input file is required");
   process.exit(1);
 }
 
@@ -48,10 +48,10 @@ if (!fs.existsSync(inputFile)) {
 }
 
 // Set output file (default or provided)
-const outputFile = args[1] || 'renovate-report.html';
+const outputFile = args[1] || "renovate-report.html";
 
 // Set up arguments for the main application
-process.argv = ['node', 'renovate-reporter', inputFile, outputFile];
+process.argv = ["node", "renovate-reporter", inputFile, outputFile];
 
 // Load and execute the main application
-require('../app/html-report.js');
+require("../app/html-report.js");
