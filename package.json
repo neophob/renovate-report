@@ -8,7 +8,7 @@
   },
   "scripts": {
     "format:write": "npx -y prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
-    "test": "node --test test/unit/",
+    "test": "node --test test/unit/*.test.js",
     "test:watch": "node --test --watch test/unit/"
   },
   "keywords": [
