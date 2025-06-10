@@ -409,7 +409,6 @@ ${getDependenciesNotFound()}
     if (!row.repository) {
       console.error(`invalid row detected: `, row);
     } else {
-      const tkId = row.repository.split("/").pop();
       let packageInfo = "";
       if (row.dependency) {
         packageInfo = `<b>Dependency:</b> ${row.dependency}`;
@@ -421,7 +420,7 @@ ${getDependenciesNotFound()}
       table +=
         "<tr>" +
         `<td>${index++}</td>` +
-        `<td>${tkId}</td>` +
+        `<td>${row.repository}</td>` +
         `<td>${row.type || "unknown"}</td>` +
         `<td>${row.msg}<br><pre>${row.err?.message || ""}</pre></td>` +
         `<td>${packageInfo}</td>` +
