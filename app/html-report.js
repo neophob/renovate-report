@@ -4,6 +4,7 @@ const {
   filterExcludedErrorMessages,
   readNdjsonFile,
   uniqueReposMap,
+  mergeRequestStats,
 } = require("./renovate-filter.js");
 
 const EXCLUDED_ERROR_MSG = ["isBranchConflicted: cleanup error"];
@@ -150,35 +151,33 @@ function getNrOfCreatedMr() {
   const messages = allEvents.filter((entry) => {
     return (
       entry.msg &&
-      entry.msg.includes("Preparing files for committing to branch")
+      (entry.msg.includes("PR created") || entry.msg.includes("PR updated"))
     );
   });
 
   affectedRepos = uniqueReposMap(messages);
-  let table = "<table><tr>"+
-    "<th>Repo</th>"+
-    "<th>Branch</th>";
+  let table = "<table><tr>" + "<th>Repo</th>" + "<th>PR title</th>";
   const allAffectedRepos = Array.from(affectedRepos.keys());
   allAffectedRepos.forEach((repo) => {
     table += `<tr><td>${repo}</td><td>${affectedRepos.get(repo)}</td>`;
   });
   table += "</table></body></html>";
 
+  const mergeStats = mergeRequestStats(allEvents);
+
   return `<div>
   <h1><b>Created Merge Requests (${affectedRepos.size})</b></h1>
-  <ul class="list-disc">
-    ${table}
+  <ul>
+    <li>PRs Created: ${mergeStats.prCreated}</li>
+    <li>PRs Updated: ${mergeStats.prUpdated}</li>
   </ul>
+  ${table}
   </div>`;
 }
 
 function getConfig() {
   const configEntries = allEvents.filter((entry) => {
-    return (
-      entry.msg &&
-      entry.msg === "Combined config" &&
-      entry.config
-    );
+    return entry.msg && entry.msg === "Combined config" && entry.config;
   });
 
   if (configEntries.length > 0) {
@@ -190,7 +189,13 @@ function getConfig() {
       <th>Value</th>
     </tr>`;
 
-    ['platform','timezone', 'prFooter', 'lockFileMaintenance','automerge'].forEach((configKey) => {
+    [
+      "platform",
+      "timezone",
+      "prFooter",
+      "lockFileMaintenance",
+      "automerge",
+    ].forEach((configKey) => {
       const data = configObj[configKey];
       table += `<tr>
         <td>${configKey}</td>
@@ -205,7 +210,6 @@ function getConfig() {
       ${table}
     </div><br>`;
   }
-
 }
 
 // Collect and summarize managers usage across all repositories

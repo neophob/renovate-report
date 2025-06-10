@@ -123,7 +123,7 @@ async function readNdjsonFile(inputFile) {
 function uniqueReposMap(repoArray) {
   const repoMap = new Map();
   repoArray.forEach((entry) => {
-    repoMap.set(entry.repository, entry.branch);
+    repoMap.set(entry.repository, entry.prTitle);
   });
   return repoMap;
 }
@@ -139,9 +139,24 @@ function filterExcludedErrorMessages(errors, excludedErrorMsg) {
   );
 }
 
+function mergeRequestStats(allLogs) {
+  let prCreated = 0;
+  let prUpdated = 0;
+  allLogs.forEach((entry) => {
+    if (entry.msg && entry.msg === "PR created") {
+      prCreated++;
+    }
+    if (entry.msg && entry.msg === "PR updated") {
+      prUpdated++;
+    }
+  });
+  return { prCreated, prUpdated };
+}
+
 module.exports = {
   readErrFromNdjsonFile,
   filterExcludedErrorMessages,
   readNdjsonFile,
   uniqueReposMap,
+  mergeRequestStats,
 };
