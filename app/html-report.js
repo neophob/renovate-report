@@ -3,12 +3,11 @@ const {
   readErrFromNdjsonFile,
   filterExcludedErrorMessages,
   readNdjsonFile,
-  uniqueRepos,
-} = require("./errors-ndjson-file-integration");
+  uniqueReposMap,
+  mergeRequestStats,
+} = require("./renovate-filter.js");
 
-const EXCLUDED_ERROR_MSG = [
-  "isBranchConflicted: cleanup error",
-];
+const EXCLUDED_ERROR_MSG = ["isBranchConflicted: cleanup error"];
 
 let affectedRepos;
 let analyzedRepositories = [];
@@ -24,7 +23,7 @@ if (args.length !== 2) {
 }
 const inputFile = args[0];
 const outputFile = args[1];
-let allEvents;
+let allEvents = [];
 
 function compare(a, b) {
   if (a.msg === b.msg) {
@@ -152,23 +151,65 @@ function getNrOfCreatedMr() {
   const messages = allEvents.filter((entry) => {
     return (
       entry.msg &&
-      entry.msg.includes("Preparing files for committing to branch")
+      (entry.msg.includes("PR created") || entry.msg.includes("PR updated"))
     );
   });
 
-  affectedRepos = uniqueRepos(messages);
-  let table = "<table>";
-  affectedRepos.forEach((repo) => {
-    table += `<tr><td>${repo}</td>`;
+  affectedRepos = uniqueReposMap(messages);
+  let table = "<table><tr>" + "<th>Repo</th>" + "<th>PR title</th>";
+  const allAffectedRepos = Array.from(affectedRepos.keys());
+  allAffectedRepos.forEach((repo) => {
+    table += `<tr><td>${repo}</td><td>${affectedRepos.get(repo)}</td>`;
   });
   table += "</table></body></html>";
 
+  const mergeStats = mergeRequestStats(allEvents);
+
   return `<div>
-  <h1><b>Created Merge Requests (${affectedRepos.length})</b></h1>
-  <ul class="list-disc">
-    ${table}
+  <h1><b>Created Merge Requests (${affectedRepos.size})</b></h1>
+  <ul>
+    <li>PRs Created: ${mergeStats.prCreated}</li>
+    <li>PRs Updated: ${mergeStats.prUpdated}</li>
   </ul>
+  ${table}
   </div>`;
+}
+
+function getConfig() {
+  const configEntries = allEvents.filter((entry) => {
+    return entry.msg && entry.msg === "Combined config" && entry.config;
+  });
+
+  if (configEntries.length > 0) {
+    const configObj = configEntries[0].config;
+
+    let table = "<table>";
+    table += `<tr>
+      <th>Key</th>
+      <th>Value</th>
+    </tr>`;
+
+    [
+      "platform",
+      "timezone",
+      "prFooter",
+      "lockFileMaintenance",
+      "automerge",
+    ].forEach((configKey) => {
+      const data = configObj[configKey];
+      table += `<tr>
+        <td>${configKey}</td>
+        <td>${JSON.stringify(data, null, 2)}</td>
+      </tr>`;
+    });
+
+    table += "</table>";
+
+    return `<div>
+      <h1><b>Config</b></h1>
+      ${table}
+    </div><br>`;
+  }
 }
 
 // Collect and summarize managers usage across all repositories
@@ -369,6 +410,9 @@ function createHtmlTable(errors) {
 </head>
 <body>
 
+
+${getConfig()}
+
 ${getAnalyzedRepositories()}
 
 <br>
@@ -405,7 +449,6 @@ ${getDependenciesNotFound()}
     if (!row.repository) {
       console.error(`invalid row detected: `, row);
     } else {
-      const tkId = row.repository.split("/").pop();
       let packageInfo = "";
       if (row.dependency) {
         packageInfo = `<b>Dependency:</b> ${row.dependency}`;
@@ -417,7 +460,7 @@ ${getDependenciesNotFound()}
       table +=
         "<tr>" +
         `<td>${index++}</td>` +
-        `<td>${tkId}</td>` +
+        `<td>${row.repository}</td>` +
         `<td>${row.type || "unknown"}</td>` +
         `<td>${row.msg}<br><pre>${row.err?.message || ""}</pre></td>` +
         `<td>${packageInfo}</td>` +

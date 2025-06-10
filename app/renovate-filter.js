@@ -16,6 +16,7 @@ const events = require("events");
  */
 
 /**
+ * Find errors from a Renovate log file in NDJSON format.
  * @arg {string} inputFile
  * @return {Promise<RenovateLogLine[]>}
  */
@@ -119,10 +120,12 @@ async function readNdjsonFile(inputFile) {
 }
 
 // return unique repos
-function uniqueRepos(repoArray) {
-  const repoSet = new Set();
-  repoArray.forEach((entry) => repoSet.add(entry.repository));
-  return Array.from(repoSet);
+function uniqueReposMap(repoArray) {
+  const repoMap = new Map();
+  repoArray.forEach((entry) => {
+    repoMap.set(entry.repository, entry.prTitle);
+  });
+  return repoMap;
 }
 
 /**
@@ -136,9 +139,24 @@ function filterExcludedErrorMessages(errors, excludedErrorMsg) {
   );
 }
 
+function mergeRequestStats(allLogs) {
+  let prCreated = 0;
+  let prUpdated = 0;
+  allLogs.forEach((entry) => {
+    if (entry.msg && entry.msg === "PR created") {
+      prCreated++;
+    }
+    if (entry.msg && entry.msg === "PR updated") {
+      prUpdated++;
+    }
+  });
+  return { prCreated, prUpdated };
+}
+
 module.exports = {
   readErrFromNdjsonFile,
   filterExcludedErrorMessages,
   readNdjsonFile,
-  uniqueRepos,
+  uniqueReposMap,
+  mergeRequestStats,
 };
