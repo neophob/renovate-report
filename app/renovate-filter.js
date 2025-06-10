@@ -120,10 +120,12 @@ async function readNdjsonFile(inputFile) {
 }
 
 // return unique repos
-function uniqueRepos(repoArray) {
-  const repoSet = new Set();
-  repoArray.forEach((entry) => repoSet.add(entry.repository));
-  return Array.from(repoSet);
+function uniqueReposMap(repoArray) {
+  const repoMap = new Map();
+  repoArray.forEach((entry) => {
+    repoMap.set(entry.repository, entry.branch);
+  });
+  return repoMap;
 }
 
 /**
@@ -141,5 +143,5 @@ module.exports = {
   readErrFromNdjsonFile,
   filterExcludedErrorMessages,
   readNdjsonFile,
-  uniqueRepos,
+  uniqueReposMap,
 };

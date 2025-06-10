@@ -3,8 +3,8 @@ const {
   readErrFromNdjsonFile,
   filterExcludedErrorMessages,
   readNdjsonFile,
-  uniqueRepos,
-} = require("./errors-ndjson-file-integration");
+  uniqueReposMap,
+} = require("./renovate-filter.js");
 
 const EXCLUDED_ERROR_MSG = ["isBranchConflicted: cleanup error"];
 
@@ -154,15 +154,20 @@ function getNrOfCreatedMr() {
     );
   });
 
-  affectedRepos = uniqueRepos(messages);
-  let table = "<table>";
-  affectedRepos.forEach((repo) => {
-    table += `<tr><td>${repo}</td>`;
+  console.log("getNrOfCreatedMr", { messages })
+
+  affectedRepos = uniqueReposMap(messages);
+  let table = "<table><tr>"+
+    "<th>Repo</th>"+
+    "<th>Branch</th>";
+  const allAffectedRepos = Array.from(affectedRepos.keys());
+  allAffectedRepos.forEach((repo) => {
+    table += `<tr><td>${repo}</td><td>${affectedRepos.get(repo)}</td>`;
   });
   table += "</table></body></html>";
 
   return `<div>
-  <h1><b>Created Merge Requests (${affectedRepos.length})</b></h1>
+  <h1><b>Created Merge Requests (${affectedRepos.size})</b></h1>
   <ul class="list-disc">
     ${table}
   </ul>
